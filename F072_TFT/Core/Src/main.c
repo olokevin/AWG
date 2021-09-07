@@ -19,7 +19,6 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "adc.h"
 #include "dac.h"
 #include "dma.h"
 #include "spi.h"
@@ -50,6 +49,8 @@
 /* USER CODE BEGIN PV */
 int16_t DAC_Value; 
 int16_t ADC_Value;  
+uint16_t keyIO[5];
+
 
 extern uint16_t AVAIL_CURSOR_X_MAX[CURSOR_Y_MAX];
 extern uint16_t AWG_LCD_Y[CURSOR_Y_MAX];
@@ -102,7 +103,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_SPI1_Init();
-  MX_ADC_Init();
   MX_DAC_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
@@ -125,10 +125,12 @@ int main(void)
 	AWG_interfaceInit();
 	Cell_init();
 	
+	HAL_TIM_Base_Start(&htim3);
+	
 	__HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
 	HAL_TIM_Base_Start_IT(&htim7);
 		
-	HAL_DAC_Start_DMA(&hdac,DAC_CHANNEL_1,(uint32_t *)sineOrigin,48,DAC_ALIGN_12B_R);
+	HAL_DAC_Start_DMA(&hdac,DAC_CHANNEL_1,(uint32_t *)sine_data,SAMPLE_POINTS,DAC_ALIGN_12B_R);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -138,16 +140,23 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		TFT_ShowNum(0,10,Key_1.button_flag,1,8,16, BLACK, WHITE);
-		TFT_ShowNum(20,10,Key_2.button_flag,1,8,16, BLACK, WHITE);
-		TFT_ShowNum(40,10,Key_R.button_flag,1,8,16, BLACK, WHITE);
-		TFT_ShowNum(60,10,Key_O.button_flag,1,8,16, BLACK, WHITE);
-		TFT_ShowNum(80,10,Key_L.button_flag,1,8,16, BLACK, WHITE);
-		
+		read_button(&button_state);
 		interfaceUpdate();
 		
-		TFT_ShowNum(10,30,cursor_x,1,8,16, BLACK, WHITE);
-		TFT_ShowNum(30,30,cursor_y,1,8,16, BLACK, WHITE);
+//		keyIO[0] = HAL_GPIO_ReadPin(Key_1_GPIO_Port, Key_1_Pin);
+//		keyIO[1] = HAL_GPIO_ReadPin(Key_2_GPIO_Port, Key_2_Pin);
+//		keyIO[2] = HAL_GPIO_ReadPin(Key_R_GPIO_Port, Key_R_Pin);
+//		keyIO[3] = HAL_GPIO_ReadPin(Key_O_GPIO_Port, Key_O_Pin);
+//		keyIO[4] = HAL_GPIO_ReadPin(Key_L_GPIO_Port, Key_L_Pin);
+//		
+//		TFT_ShowNum(0,10,Key_1.button_flag,1,8,16, BLACK, WHITE);
+//		TFT_ShowNum(20,10,Key_2.button_flag,1,8,16, BLACK, WHITE);
+//		TFT_ShowNum(40,10,Key_R.button_flag,1,8,16, BLACK, WHITE);
+//		TFT_ShowNum(60,10,Key_O.button_flag,1,8,16, BLACK, WHITE);
+//		TFT_ShowNum(80,10,Key_L.button_flag,1,8,16, BLACK, WHITE);
+//		
+//		TFT_ShowNum(10,30,cursor_x,1,8,16, BLACK, WHITE);
+//		TFT_ShowNum(30,30,cursor_y,1,8,16, BLACK, WHITE);
 	}
   /* USER CODE END 3 */
 }
@@ -164,11 +173,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSI14;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.HSI14CalibrationValue = 16;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL6;

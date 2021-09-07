@@ -50,7 +50,7 @@ void MX_DAC_Init(void)
   /** DAC channel OUT1 config
   */
   sConfig.DAC_Trigger = DAC_TRIGGER_T3_TRGO;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
   if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
@@ -88,7 +88,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef* dacHandle)
     hdma_dac_ch1.Init.Direction = DMA_MEMORY_TO_PERIPH;
     hdma_dac_ch1.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_dac_ch1.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_dac_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hdma_dac_ch1.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
     hdma_dac_ch1.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
     hdma_dac_ch1.Init.Mode = DMA_CIRCULAR;
     hdma_dac_ch1.Init.Priority = DMA_PRIORITY_HIGH;

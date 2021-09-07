@@ -3,7 +3,10 @@
 
 #include "main.h"
 
+//DAC defines
+#define SAMPLE_POINTS 240
 #define DAC_DHR12RD_ADDRESS (DAC_BASE+0x20)		//12Î»ÓÒ¶ÔÆë¼Ä´æÆ÷µØÖ·
+#define ORIGIN_AMP 3.5
 
 typedef enum
 {
@@ -43,8 +46,15 @@ typedef struct
 	Value_TypeDef Offset;	
 }AWG_TypeDef;
 
-extern uint16_t sineOrigin[48];
+extern uint16_t sine_data[SAMPLE_POINTS];
+extern uint16_t tri_data[SAMPLE_POINTS];
+extern uint16_t dac_output[SAMPLE_POINTS];
+
 extern AWG_TypeDef awg;
 
 void AWG_Init(void);
+void AWG_dacUpdate(AWG_TypeDef *p_awg, uint16_t* origin_array, uint16_t* output_array);
+void AWG_PWMUpdate(AWG_TypeDef *p_awg);
+void AWG_updateOutput(AWG_TypeDef *p_awg);
+
 #endif

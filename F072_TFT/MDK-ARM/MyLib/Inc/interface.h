@@ -13,12 +13,13 @@
 #define FONT_H 16
 
 #define CURSOR_X_MAX 6
-#define CURSOR_Y_MAX 6
+#define CURSOR_Y_MAX 5
 
-#define FREQUENCY_CURSOR_Y	2
-#define PERIOD_CURSOR_Y			3
-#define AMPLITUDE_CURSOR_Y	4
-#define OFFSET_CURSOR_Y			5
+#define MODE_CURSOR_Y				0
+#define FREQUENCY_CURSOR_Y	1
+#define AMPLITUDE_CURSOR_Y	2
+#define OFFSET_CURSOR_Y			3
+#define DUTYCYCLE_CURSOR_Y	4
 
 #define INT_CURSOR_K				0		//Ç§Î»
 #define INT_CURSOR_H				1		//°ÙÎ»

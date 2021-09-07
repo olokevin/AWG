@@ -32,7 +32,6 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "adc.h"
 #include "dac.h"
 #include "dma.h"
 #include "spi.h"
