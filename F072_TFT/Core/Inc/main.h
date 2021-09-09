@@ -88,7 +88,8 @@ void Error_Handler(void);
 #define LCD_SDA_Pin GPIO_PIN_5
 #define LCD_SDA_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+#define ABS(x) ((x)>0? (x):(-(x))) 
+#define LIMIT_MAX_MIN(x, max, min)	(((x) <= (min)) ? (min):(((x) >= (max)) ? (max) : (x)))  
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

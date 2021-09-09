@@ -40,6 +40,24 @@ uint16_t tri_data[SAMPLE_POINTS] = {
 	1929,1944,1959,1974,1988,2003,2018,2033,2048
 };
 
+uint16_t zig_data[SAMPLE_POINTS] = {
+	2048,2041,2033,2026,2018,2011,2003,1996,1988,1981,1974,1966,1959,1951,1944,
+	1936,1929,1921,1914,1906,1899,1891,1884,1876,1869,1862,1854,1847,1839,1832,
+	1824,1817,1809,1802,1794,1787,1779,1772,1764,1757,1750,1742,1735,1727,1720,
+	1712,1705,1697,1690,1682,1675,1667,1660,1652,1645,1637,1630,1623,1615,1608,
+	1600,1593,1585,1578,1570,1563,1555,1548,1540,1533,1525,1518,1511,1503,1496,
+	1488,1481,1473,1466,1458,1451,1443,1436,1428,1421,1413,1406,1399,1391,1384,
+	1376,1369,1361,1354,1346,1339,1331,1324,1316,1309,1301,1294,1287,1279,1272,
+	1264,1257,1249,1242,1234,1227,1219,1212,1204,1197,1189,1182,1175,1167,1160,
+	1152,1145,1137,1130,1122,1115,1107,1100,1092,1085,1077,1070,1063,1055,1048,
+	1040,1033,1025,1018,1010,1003,995,988,980,973,965,958,950,943,936,928,921,913,
+	906,898,891,883,876,868,861,853,846,838,831,824,816,809,801,794,786,779,771,
+	764,756,749,741,734,726,719,712,704,697,689,682,674,667,659,652,644,637,629,
+	622,614,607,600,592,585,577,570,562,555,547,540,532,525,517,510,502,495,488,
+	480,473,465,458,450,443,435,428,420,413,405,398,390,383,376,368,361,353,346,
+	338,331,323,316,308,301,293,286,278,271,263
+};
+
 uint16_t dac_output[SAMPLE_POINTS];
 
 AWG_TypeDef awg;
@@ -57,7 +75,7 @@ Cell_Typedef awg_cells[CURSOR_Y_MAX][CURSOR_X_MAX];
 
 void AWG_dataInit(void)
 {
-	awg.Cursor	= AWG_CURSOR_NONE;
+	awg.max_output = 3.5f;
 	awg.Mode		= AWG_MODE_SINE;
 	
 	awg.Frequency.actual_value = 100;
@@ -69,8 +87,8 @@ void AWG_dataInit(void)
 	awg.Frequency.unit_string[0] = "Hz ";
 	awg.Frequency.unit_string[1] = "kHz";
 	
-	awg.Amplitude.actual_value = 4.0f;
-	awg.Amplitude.show_value_int[0] = 4;
+	awg.Amplitude.actual_value = 3.0f;
+	awg.Amplitude.show_value_int[0] = 3;
 	awg.Amplitude.show_value_dec = 0;
 	awg.Amplitude.unit_no = 0;
 	awg.Amplitude.unit_string[0] = "V";
@@ -91,7 +109,7 @@ void AWG_cellInit(void)
 	awg_cells[MODE_CURSOR_Y][1].cell_mode = CELL_MODE_TXT;
 	awg_cells[MODE_CURSOR_Y][1].text = "Tri";	
 	awg_cells[MODE_CURSOR_Y][2].cell_mode = CELL_MODE_TXT;
-	awg_cells[MODE_CURSOR_Y][2].text = "SQR";
+	awg_cells[MODE_CURSOR_Y][2].text = "Zig";
 	
 	awg_cells[FREQUENCY_CURSOR_Y][0].cell_mode = CELL_MODE_NUM;
 	awg_cells[FREQUENCY_CURSOR_Y][0].p_num = &(awg.Frequency.show_value_int[2]);	
@@ -159,7 +177,10 @@ void AWG_interfaceInit(void)
 		{
 			awg_cells[i][j].LCD_X = AWG_LCD_X[i][j];
 			awg_cells[i][j].LCD_Y = AWG_LCD_Y[i];
-//			awg_cells[i][j].len  = Cell_getLength(&awg_cells[i][j]);
+			if(i==0&&j==0)
+				awg_cells[i][j].is_selected = IS_SELECTED;
+			else
+				awg_cells[i][j].is_selected = NOT_SELECTED;
 			Cell_TFT_Show(&awg_cells[i][j]);
 		}
 	}
@@ -208,6 +229,7 @@ void AWG_interfaceUpdate(void)
 					
 					cursor_x--;
 					resetNum(&cursor_x, 0, AVAIL_CURSOR_X_MAX[cursor_y]-1);
+					awg.Mode = cursor_x;
 					
 					awg_cells[cursor_y][cursor_x].is_selected = IS_SELECTED;
 					Cell_TFT_Show(&awg_cells[cursor_y][cursor_x]);
@@ -280,7 +302,8 @@ void AWG_interfaceUpdate(void)
 					
 					cursor_x++;
 					resetNum(&cursor_x, 0, AVAIL_CURSOR_X_MAX[cursor_y]-1);
-					
+					awg.Mode = cursor_x;
+				
 					awg_cells[cursor_y][cursor_x].is_selected = IS_SELECTED;
 					Cell_TFT_Show(&awg_cells[cursor_y][cursor_x]);
 					break;
@@ -353,24 +376,30 @@ void AWG_dacUpdate(AWG_TypeDef *p_awg, uint16_t* origin_array, uint16_t* output_
 {
 	int i;
 	uint16_t tim3_period;
+	float k,b;
 	
 	//Stop Output
 	HAL_DAC_Stop_DMA(&hdac, DAC_CHANNEL_1);	
 	HAL_TIM_Base_Stop(&htim3);
 	
 	// Set TIM3 autoreload.
-	tim3_period = (100000.0f/p_awg->Frequency.actual_value) - 1;
+	tim3_period = LIMIT_MAX_MIN((uint32_t)(100000.0f/p_awg->Frequency.actual_value) - 1, 99999, 0);
 	TIM3->CNT = 0;
 	__HAL_TIM_SET_AUTORELOAD(&htim3, tim3_period);
 
 	// Set Output
+	k = awg.Amplitude.actual_value / awg.max_output;
+	b = (4*k + awg.Offset.actual_value - 4.05f) / (-0.00195f);
 	for(i=0;i<SAMPLE_POINTS;i++)
-		output_array[i] = (uint16_t)((origin_array[i] + p_awg->Offset.actual_value) * p_awg->Amplitude.actual_value / 4.0f);
-	
+	{
+		output_array[i] = LIMIT_MAX_MIN((uint16_t)(origin_array[i] * k + b), DAC_MAX, DAC_MIN);
+//		output_array[i] = (uint16_t)(origin_array[i] * p_awg->Amplitude.actual_value / MAX_OUTPUT + 500*(p_awg->Offset.actual_value - 4.0f));
+	}
 	//Start Output
   HAL_TIM_Base_Start(&htim3);
 	HAL_DAC_Start_DMA(&hdac,DAC_CHANNEL_1,(uint32_t *)output_array,SAMPLE_POINTS,DAC_ALIGN_12B_R);	
 }
+
 
 void AWG_updateOutput(AWG_TypeDef *p_awg)
 {
@@ -382,7 +411,8 @@ void AWG_updateOutput(AWG_TypeDef *p_awg)
 		case AWG_MODE_TRI:
 			AWG_dacUpdate(p_awg, tri_data, dac_output);
 			break;
-		case AWG_MODE_SQR:
+		case AWG_MODE_ZIG:
+			AWG_dacUpdate(p_awg, zig_data, dac_output);
 			break;
 		default:
 			break;

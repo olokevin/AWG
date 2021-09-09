@@ -80,6 +80,7 @@ void modeCheck(void)
 		{
 			output_state = AWG_OUTPUT_MODE;
 			LCD_Clear(BLACK);
+			awg.Mode = AWG_MODE_SINE;
 			AWG_interfaceInit();
 		}
 	}

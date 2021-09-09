@@ -21,6 +21,7 @@ typedef struct
 }PWM_namespace;
 
 extern PWM_TypeDef pwm;
+extern Cell_Typedef pwm_cells[PWM_CURSOR_Y_MAX][PWM_CURSOR_X_MAX];
 
 void PWM_cellInit(PWM_TypeDef *p_pwm);
 void PWM_interfaceInit(PWM_TypeDef *p_pwm);

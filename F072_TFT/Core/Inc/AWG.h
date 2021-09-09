@@ -6,7 +6,6 @@
 //DAC defines
 #define SAMPLE_POINTS 240
 #define DAC_DHR12RD_ADDRESS (DAC_BASE+0x20)		//12位右对齐寄存器地址
-#define MAX_OUTPUT 3.5
 
 #define CURSOR_X_MAX 6
 #define CURSOR_Y_MAX 4
@@ -16,11 +15,14 @@
 #define AMPLITUDE_CURSOR_Y	2
 #define OFFSET_CURSOR_Y			3
 
+#define DAC_MIN 256
+#define DAC_MAX 3840
+
 typedef enum
 {
 	AWG_MODE_SINE = 0,
 	AWG_MODE_TRI,
-	AWG_MODE_SQR	
+	AWG_MODE_ZIG	
 }AWG_MODE_ENUM;
 
 typedef enum
@@ -45,8 +47,8 @@ typedef struct
 
 typedef struct
 {
-	CURSOR_ENUM Cursor;
 	AWG_MODE_ENUM Mode;
+	float max_output;
 	Value_TypeDef Frequency;			//默认1KHz  单位
 	Value_TypeDef Period;				
 	Value_TypeDef Amplitude;	

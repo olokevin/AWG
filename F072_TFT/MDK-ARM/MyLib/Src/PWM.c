@@ -62,7 +62,10 @@ void PWM_interfaceInit(PWM_TypeDef *p_pwm)
 		{
 			pwm_cells[i][j].LCD_X = PWM_LCD_X[i][j];
 			pwm_cells[i][j].LCD_Y = PWM_LCD_Y[i];
-//			pwm_cells[i][j].len  = Cell_getLength(&pwm_cells[i][j]);
+			if(i==0&&j==0)
+				pwm_cells[i][j].is_selected = IS_SELECTED;
+			else
+				pwm_cells[i][j].is_selected = NOT_SELECTED;
 			Cell_TFT_Show(&pwm_cells[i][j]);
 		}
 	}
@@ -198,7 +201,7 @@ void PWM_updateOutput(PWM_TypeDef *p_pwm)
 	//Stop Output
 	HAL_TIM_PWM_Stop(&htim2,TIM_CHANNEL_3);
 	
-	tim2_psc = 4800000 / p_pwm->Frequency.actual_value - 1;
+	tim2_psc = (uint32_t)(LIMIT_MAX_MIN(480000 / p_pwm->Frequency.actual_value - 1, 479999, 0));
 	TIM3->CNT = 0;
 	__HAL_TIM_SET_PRESCALER(&htim2, tim2_psc);
 	__HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3 ,p_pwm->DutyCycle.actual_value);
