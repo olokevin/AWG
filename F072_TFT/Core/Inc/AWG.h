@@ -6,7 +6,7 @@
 //DAC defines
 #define SAMPLE_POINTS 240
 #define DAC_DHR12RD_ADDRESS (DAC_BASE+0x20)		//12Î»ÓÒ¶ÔÆë¼Ä´æÆ÷µØÖ·
-#define ORIGIN_AMP 3.5
+#define MAX_OUTPUT 3.5
 
 typedef enum
 {

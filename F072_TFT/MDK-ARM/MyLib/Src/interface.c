@@ -289,21 +289,37 @@ void interfaceUpdate(void)
 					Cell_TFT_Show(&awg_cells[cursor_y][cursor_x]);
 					break;
 				case FREQUENCY_CURSOR_Y:
-					Cell_numDecrease(&(awg_cells[cursor_y][cursor_x]));
+					if(awg_cells[cursor_y][cursor_x].cell_mode == CELL_MODE_NUM)
+					{
+						Cell_numDecrease(&(awg_cells[cursor_y][cursor_x]));
+					}
+					else
+					{
+						if(awg.Frequency.unit_no == 0)
+							awg.Frequency.unit_no = 1;
+						else
+							awg.Frequency.unit_no = 0;
+						awg_cells[cursor_y][cursor_x].text = awg.Frequency.unit_string[awg.Frequency.unit_no];
+					}
 					Cell_TFT_Show(&(awg_cells[cursor_y][cursor_x]));
 					awg.Frequency.actual_value = awg.Frequency.show_value_int[0]+\
 																		10*awg.Frequency.show_value_int[1]+\
 																	 100*awg.Frequency.show_value_int[2]+\
 																	0.1f*awg.Frequency.show_value_dec;
+					if(awg.Frequency.unit_no == 1)
+						awg.Frequency.actual_value *= 1000;
 					break;
 				case AMPLITUDE_CURSOR_Y:
 					//减1
 					Cell_numDecrease(&(awg_cells[cursor_y][cursor_x]));
 					//符号
-					if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
-					else
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					if(cursor_x == 0)
+					{
+						if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
+						else
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					}
 					//显示	
 					Cell_TFT_Show(&(awg_cells[cursor_y][cursor_x]));
 					//修改值
@@ -314,10 +330,13 @@ void interfaceUpdate(void)
 					//减1
 					Cell_numDecrease(&(awg_cells[cursor_y][cursor_x]));
 					//符号
-					if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
-					else
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					if(cursor_x == 0)
+					{
+						if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
+						else
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					}
 					//显示		
 					Cell_TFT_Show(&(awg_cells[cursor_y][cursor_x]));
 					//修改值
@@ -342,21 +361,37 @@ void interfaceUpdate(void)
 					Cell_TFT_Show(&awg_cells[cursor_y][cursor_x]);
 					break;
 				case FREQUENCY_CURSOR_Y:
-					Cell_numIncrease(&(awg_cells[cursor_y][cursor_x]));
+					if(awg_cells[cursor_y][cursor_x].cell_mode == CELL_MODE_NUM)
+					{
+						Cell_numIncrease(&(awg_cells[cursor_y][cursor_x]));
+					}
+					else
+					{
+						if(awg.Frequency.unit_no == 0)
+							awg.Frequency.unit_no = 1;
+						else
+							awg.Frequency.unit_no = 0;
+						awg_cells[cursor_y][cursor_x].text = awg.Frequency.unit_string[awg.Frequency.unit_no];
+					}
 					Cell_TFT_Show(&(awg_cells[cursor_y][cursor_x]));
 					awg.Frequency.actual_value = awg.Frequency.show_value_int[0]+\
 																		10*awg.Frequency.show_value_int[1]+\
 																	 100*awg.Frequency.show_value_int[2]+\
 																	0.1f*awg.Frequency.show_value_dec;
+					if(awg.Frequency.unit_no == 1)
+						awg.Frequency.actual_value *= 1000;
 					break;
 				case AMPLITUDE_CURSOR_Y:
 					//加1
 					Cell_numIncrease(&(awg_cells[cursor_y][cursor_x]));
 					//符号
-					if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
-					else
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					if(cursor_x == 0)
+					{
+						if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
+						else
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					}
 					//显示	
 					Cell_TFT_Show(&(awg_cells[cursor_y][cursor_x]));
 					//修改值
@@ -367,10 +402,13 @@ void interfaceUpdate(void)
 					//加1
 					Cell_numIncrease(&(awg_cells[cursor_y][cursor_x]));
 					//符号
-					if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
-					else
-						TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					if(cursor_x == 0)
+					{
+						if(*(awg_cells[cursor_y][cursor_x].p_num) < 0)
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, '-', FONT_W, FONT_H, 1, BLACK, WHITE);
+						else
+							TFT_ShowChar(awg_cells[cursor_y][cursor_x].LCD_X - 8, awg_cells[cursor_y][cursor_x].LCD_Y, ' ', FONT_W, FONT_H, 1, BLACK, WHITE);
+					}
 					//显示		
 					Cell_TFT_Show(&(awg_cells[cursor_y][cursor_x]));
 					//修改值
