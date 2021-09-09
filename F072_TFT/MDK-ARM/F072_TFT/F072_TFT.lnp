@@ -33,6 +33,7 @@
 "f072_tft\stm32f0xx_hal_tim_ex.o"
 "f072_tft\system_stm32f0xx.o"
 "f072_tft\interface.o"
+"f072_tft\pwm.o"
 --library_type=microlib --strict --scatter "F072_TFT\F072_TFT.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

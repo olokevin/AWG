@@ -12,15 +12,6 @@
 #define FONT_W 8
 #define FONT_H 16
 
-#define CURSOR_X_MAX 6
-#define CURSOR_Y_MAX 5
-
-#define MODE_CURSOR_Y				0
-#define FREQUENCY_CURSOR_Y	1
-#define AMPLITUDE_CURSOR_Y	2
-#define OFFSET_CURSOR_Y			3
-#define DUTYCYCLE_CURSOR_Y	4
-
 #define INT_CURSOR_K				0		//千位
 #define INT_CURSOR_H				1		//百位
 #define INT_CURSOR_T				2		//十位
@@ -39,12 +30,12 @@ typedef struct
 	uint8_t  is_selected; //为0表示该cell未被选中，为1表示被选中
 }Cell_Typedef;
 
+extern short cursor_x;
+extern short cursor_y;
+
 void Cell_TFT_Show(Cell_Typedef *cell);
 uint8_t Cell_getLength(Cell_Typedef* cell);
-void Cell_init(void);
 
-void AWG_interfaceInit(void);
-void interfaceUpdate(void);
 //void valueIncrease(Value_TypeDef *value);
 //void valueDecrease(Value_TypeDef *value);
 void resetNum(short *num, short min_num, short max_num);

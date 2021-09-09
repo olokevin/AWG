@@ -40,9 +40,10 @@ extern "C" {
 
 #include "lcd_drv.h"
 #include "font.h"
-#include "AWG.h"
-#include "ModeChoose.h"
 #include "interface.h"
+#include "ModeChoose.h"
+#include "AWG.h"
+#include "PWM.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/

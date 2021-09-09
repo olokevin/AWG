@@ -8,11 +8,19 @@
 #define DAC_DHR12RD_ADDRESS (DAC_BASE+0x20)		//12位右对齐寄存器地址
 #define MAX_OUTPUT 3.5
 
+#define CURSOR_X_MAX 6
+#define CURSOR_Y_MAX 4
+
+#define MODE_CURSOR_Y				0
+#define FREQUENCY_CURSOR_Y	1
+#define AMPLITUDE_CURSOR_Y	2
+#define OFFSET_CURSOR_Y			3
+
 typedef enum
 {
 	AWG_MODE_SINE = 0,
 	AWG_MODE_TRI,
-	AWG_MODE_PWM	
+	AWG_MODE_SQR	
 }AWG_MODE_ENUM;
 
 typedef enum
@@ -41,8 +49,7 @@ typedef struct
 	AWG_MODE_ENUM Mode;
 	Value_TypeDef Frequency;			//默认1KHz  单位
 	Value_TypeDef Period;				
-	Value_TypeDef Amplitude;
-	Value_TypeDef DutyCycle;	
+	Value_TypeDef Amplitude;	
 	Value_TypeDef Offset;	
 }AWG_TypeDef;
 
@@ -52,9 +59,20 @@ extern uint16_t dac_output[SAMPLE_POINTS];
 
 extern AWG_TypeDef awg;
 
-void AWG_Init(void);
+extern uint16_t AVAIL_CURSOR_X_MAX[CURSOR_Y_MAX];
+extern uint16_t AWG_LCD_Y[CURSOR_Y_MAX];
+extern uint16_t AWG_LCD_X[CURSOR_Y_MAX][CURSOR_X_MAX];
+
+extern Cell_Typedef awg_cells[CURSOR_Y_MAX][CURSOR_X_MAX];		//行为y 列为x
+
+void AWG_dataInit(void);
+void AWG_cellInit(void);
+void AWG_interfaceInit(void);
+
+void AWG_interfaceUpdate(void);
+
 void AWG_dacUpdate(AWG_TypeDef *p_awg, uint16_t* origin_array, uint16_t* output_array);
-void AWG_PWMUpdate(AWG_TypeDef *p_awg);
 void AWG_updateOutput(AWG_TypeDef *p_awg);
+
 
 #endif

@@ -51,15 +51,6 @@ int16_t DAC_Value;
 int16_t ADC_Value;  
 uint16_t keyIO[5];
 
-
-extern uint16_t AVAIL_CURSOR_X_MAX[CURSOR_Y_MAX];
-extern uint16_t AWG_LCD_Y[CURSOR_Y_MAX];
-
-extern uint16_t AWG_LCD_X[CURSOR_Y_MAX][CURSOR_X_MAX];
-extern Cell_Typedef awg_cells[CURSOR_Y_MAX][CURSOR_X_MAX];		//行为y 列为x
-
-extern short cursor_x;
-extern short cursor_y;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -120,15 +111,20 @@ int main(void)
 //	TFT_ShowString(20,120,"Key_O:", 8, 16, 0, BLACK, WHITE);
 //	TFT_ShowString(20,140,"Key_L:", 8, 16, 0, BLACK, WHITE);
 	
-	Key_Init();
-	AWG_Init();	
+	AWG_dataInit();
+	AWG_cellInit();
+	
+	PWM_dataInit(&pwm);
+	PWM_cellInit(&pwm);
+	
 	AWG_interfaceInit();
-	Cell_init();
 	
 	HAL_TIM_Base_Start(&htim3);
 	
 	__HAL_TIM_CLEAR_IT(&htim7, TIM_IT_UPDATE);
 	HAL_TIM_Base_Start_IT(&htim7);
+	
+	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);
 		
 	HAL_DAC_Start_DMA(&hdac,DAC_CHANNEL_1,(uint32_t *)sine_data,SAMPLE_POINTS,DAC_ALIGN_12B_R);
   /* USER CODE END 2 */
@@ -141,7 +137,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		read_button(&button_state);
-		interfaceUpdate();
+		modeCheck();
 		
 //		keyIO[0] = HAL_GPIO_ReadPin(Key_1_GPIO_Port, Key_1_Pin);
 //		keyIO[1] = HAL_GPIO_ReadPin(Key_2_GPIO_Port, Key_2_Pin);

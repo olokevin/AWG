@@ -22,6 +22,9 @@ Key_1 	Key_2 Key_R(×ó°â) Key_O Key_L(ÓÒ°â)
 #define KEY_O_HOLD 0x22
 #define KEY_L_HOLD 0x21
 
+#define AWG_OUTPUT_MODE		0
+#define PWM_OUTPUT_MODE		1
+
 typedef enum
 {
 	KEY_CHECKING = 0,
@@ -46,4 +49,5 @@ void Key_Check(Key_TypeDef *key_state);
 
 void read_button(uint8_t *button_state);
 uint8_t encode_button(void);		//²»ÓÃinline
+void modeCheck(void);
 #endif
